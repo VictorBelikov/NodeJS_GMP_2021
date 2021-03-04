@@ -1,0 +1,24 @@
+{
+  "name": "homework_1",
+  "version": "1.0.0",
+  "description": "NodeJS_GMP Homework_1",
+  "main": "server.js",
+  "scripts": {
+    "task1": "nodemon --exec babel-node ./src/task1.js",
+    "task2": "nodemon --exec babel-node ./src/task2.js"
+  },
+  "author": "Victor Belikov",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.13.8",
+    "@babel/node": "^7.13.0",
+    "@babel/preset-env": "^7.13.9",
+    "eslint": "^7.21.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1",
+    "nodemon": "^2.0.7"
+  },
+  "dependencies": {
+    "csvtojson": "^2.0.10"
+  }
+}
