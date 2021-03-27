@@ -1,7 +1,7 @@
 import express from 'express';
 import morgan from 'morgan';
 
-import userRoutes from './api/routes/user';
+import userRoutes from './api/routes/user.js';
 
 const app = express();
 
@@ -35,8 +35,9 @@ app.use((req, res, next) => {
 app.use((err, req, res, next) => {
   console.log('Global error handler:\n', err);
   res.status(err.statusCode || 500).json({
-    error: err.message,
+    errorMessage: err.message,
     status: err.statusCode,
+    error: err,
   });
 });
 

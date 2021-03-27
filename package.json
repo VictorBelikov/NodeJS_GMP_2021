@@ -2,6 +2,7 @@
   "name": "homework_2_in_memory_crud",
   "version": "1.0.0",
   "description": "NodeJS_GMP Homework_2 In memory CRUD",
+  "type": "module",
   "main": "server.js",
   "scripts": {
     "start": "nodemon --exec babel-node ./src/server.js"
