@@ -5,7 +5,7 @@ export const getAllUsers = (req, res, next) => {
     const allUsers = User.fetchAll();
     res.status(200).json({
       message: 'Fetched users successfully!',
-      totalUsers: allUsers,
+      totalUsers: allUsers
     });
   } catch (err) {
     if (!err.statusCode) {
@@ -37,7 +37,7 @@ export const createUser = (req, res, next) => {
     const newUser = new User(req.body.login, req.body.password, req.body.age).save();
     res.status(201).json({
       message: 'User created successfully!',
-      createdUser: newUser,
+      createdUser: newUser
     });
   } catch (err) {
     if (!err.statusCode) {

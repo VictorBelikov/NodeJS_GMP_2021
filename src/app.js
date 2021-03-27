@@ -32,12 +32,13 @@ app.use((req, res, next) => {
   next(error);
 });
 
+// eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
   console.log('Global error handler:\n', err);
   res.status(err.statusCode || 500).json({
     errorMessage: err.message,
     status: err.statusCode,
-    error: err,
+    error: err
   });
 });
 
