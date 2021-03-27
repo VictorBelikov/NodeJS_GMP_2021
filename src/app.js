@@ -32,11 +32,11 @@ app.use((req, res, next) => {
   next(error);
 });
 
-// Handle all errors in the app
 app.use((err, req, res, next) => {
-  res.status(err.status || 500).json({
+  console.log('Global error handler:\n', err);
+  res.status(err.statusCode || 500).json({
     error: err.message,
-    status: err.status,
+    status: err.statusCode,
   });
 });
 
