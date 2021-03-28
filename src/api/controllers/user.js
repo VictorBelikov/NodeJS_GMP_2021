@@ -1,4 +1,5 @@
 import User from '../models/user.js';
+import { getAutoSuggestUsers } from '../util/getAutoSuggestedUsers.js';
 
 export const getAllUsers = (req, res, next) => {
   try {
@@ -74,6 +75,28 @@ export const deleteUser = (req, res, next) => {
       throw error;
     }
     res.status(200).json({ message: 'User deleted!', user });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    return next(err);
+  }
+};
+
+export const suggestedUserList = (req, res, next) => {
+  let { limit, substr } = req.query;
+  substr = substr ? substr : '';
+  limit = limit ? +limit : 0;
+
+  try {
+    const allUsers = User.fetchAll();
+    if (allUsers.length > 0) {
+      const listOfUsers = getAutoSuggestUsers(substr, limit, allUsers);
+      return res.status(200).json({ message: 'Fetched users successfully!', listOfUsers });
+    }
+    const error = new Error('Could not find Users in DB!');
+    error.statusCode = 404;
+    throw error;
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
