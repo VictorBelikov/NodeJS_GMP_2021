@@ -1,12 +1,12 @@
 import User from '../models/user.js';
-import { getAutoSuggestUsers } from '../util/getAutoSuggestedUsers.js';
+import getAutoSuggestUsers from '../util/getAutoSuggestUsers.js';
 
 export const getAllUsers = (req, res, next) => {
   try {
     const allUsers = User.fetchAll();
     res.status(200).json({
       message: 'Fetched users successfully!',
-      totalUsers: allUsers
+      totalUsers: allUsers,
     });
   } catch (err) {
     if (!err.statusCode) {
@@ -38,7 +38,7 @@ export const createUser = (req, res, next) => {
     const newUser = new User(req.body.login, req.body.password, req.body.age).save();
     res.status(201).json({
       message: 'User created successfully!',
-      createdUser: newUser
+      createdUser: newUser,
     });
   } catch (err) {
     if (!err.statusCode) {
@@ -85,7 +85,7 @@ export const deleteUser = (req, res, next) => {
 
 export const suggestedUserList = (req, res, next) => {
   let { limit, substr } = req.query;
-  substr = substr ? substr : '';
+  substr = substr || '';
   limit = limit ? +limit : 0;
 
   try {

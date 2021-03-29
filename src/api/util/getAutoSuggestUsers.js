@@ -1,4 +1,4 @@
-export const getAutoSuggestUsers = (loginSubstring, limit, allUsers) =>
+export default (loginSubstring, limit, allUsers) =>
   allUsers
     .slice(0, (limit || allUsers.length))
     .filter((user) => user.login.includes(loginSubstring))
