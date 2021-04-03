@@ -1,7 +1,5 @@
 export default (loginSubstring, limit, allUsers) =>
   allUsers
-    .slice(0, (limit || allUsers.length))
-    .filter((user) => user.login.includes(loginSubstring))
     .sort((a, b) => {
       if (a.login > b.login) {
         return 1;
@@ -10,4 +8,6 @@ export default (loginSubstring, limit, allUsers) =>
         return -1;
       }
       return 0;
-    });
+    })
+    .filter((user) => user.login.includes(loginSubstring))
+    .slice(0, limit || allUsers.length);
