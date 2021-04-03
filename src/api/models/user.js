@@ -9,6 +9,16 @@ class User {
   }
 
   save() {
+    if (DB.size > 0) {
+      for (const [, user] of DB.entries()) {
+        if (this.login === user.login) {
+          const error = new Error('User with this login already exists in DB');
+          error.statusCode = 400;
+          throw error;
+        }
+      }
+    }
+
     this.id = DB.size === 0 ? 1 : DB.size + 1;
     DB.set(this.id, this);
     return this;

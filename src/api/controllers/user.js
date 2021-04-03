@@ -4,10 +4,13 @@ import getAutoSuggestUsers from '../util/getAutoSuggestUsers.js';
 export const getAllUsers = (req, res, next) => {
   try {
     const allUsers = User.fetchAll();
-    res.status(200).json({
-      message: 'Fetched users successfully!',
-      totalUsers: allUsers,
-    });
+    if (allUsers.length > 0) {
+      return res.status(200).json({
+        message: 'Fetched users successfully!',
+        totalUsers: allUsers,
+      });
+    }
+    res.status(200).json({ message: 'No users in DB'});
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
