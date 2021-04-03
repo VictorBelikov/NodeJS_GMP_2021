@@ -10,7 +10,7 @@ export const getAllUsers = (req, res, next) => {
         totalUsers: allUsers,
       });
     }
-    res.status(200).json({ message: 'No users in DB'});
+    res.status(200).json({ message: 'No users in DB' });
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
@@ -38,7 +38,8 @@ export const getSpecificUser = (req, res, next) => {
 
 export const createUser = (req, res, next) => {
   try {
-    const newUser = new User(req.body.login, req.body.password, req.body.age).save();
+    const { login, password, age } = req.body;
+    const newUser = new User(login, password, age).save();
     res.status(201).json({
       message: 'User created successfully!',
       createdUser: newUser,
@@ -59,7 +60,8 @@ export const updateUser = (req, res, next) => {
       error.statusCode = 404;
       throw error;
     }
-    const updatedUser = User.update(+req.params.userId, new User(req.body.login, req.body.password, req.body.age));
+    const { login, password, age } = req.body;
+    const updatedUser = User.update(+req.params.userId, new User(login, password, age));
     res.status(200).json({ message: 'User updated!', updatedUser });
   } catch (err) {
     if (!err.statusCode) {
