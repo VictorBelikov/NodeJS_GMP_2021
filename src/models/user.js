@@ -1,5 +1,42 @@
 const DB = new Map();
 
+// TODO: remove this dummy data
+DB.set(1, {
+  id: 1,
+  login: 'login1',
+  password: 'pass1',
+  age: 21,
+  isDeleted: false,
+});
+DB.set(2, {
+  id: 2,
+  login: 'login2',
+  password: 'pass2',
+  age: 22,
+  isDeleted: false,
+});
+DB.set(3, {
+  id: 3,
+  login: 'login3',
+  password: 'pass3',
+  age: 23,
+  isDeleted: false,
+});
+DB.set(4, {
+  id: 4,
+  login: 'login10',
+  password: 'pass4',
+  age: 24,
+  isDeleted: false,
+});
+DB.set(5, {
+  id: 5,
+  login: 'login5',
+  password: 'pass5',
+  age: 25,
+  isDeleted: false,
+});
+
 class User {
   constructor(login, password, age) {
     this.login = login;
