@@ -22,11 +22,13 @@ app.use((req, res, next) => {
 
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
-  console.log('Global error handler:\n', err);
-  res.status(err.statusCode || 500).json({
-    errorMessage: err.message,
-    status: err.statusCode,
-    error: err,
+  console.log('!! Global error handler !!\n', err);
+  const status = err.statusCode || 500;
+
+  res.status(status).json({
+    message: status === 500 ? 'Internal server error' : err.message,
+    status,
+    fullErrorObject: err,
   });
 });
 
