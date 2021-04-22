@@ -22,4 +22,3 @@ import app from './app.js';
     console.error('Connection error: ', e);
   }
 })();
-
