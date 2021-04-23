@@ -10,4 +10,6 @@ export const dbDialect = 'postgres';
 
 export const TableNames = {
   USER: 'users',
+  GROUP: 'groups',
+  USER_GROUPS: 'userGroups',
 };

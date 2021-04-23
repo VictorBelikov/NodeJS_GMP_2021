@@ -1,6 +1,5 @@
 import errorService from '../api/controllers/errorService.js';
 
-/* eslint-disable new-cap */
 export default class UserService {
   constructor(userModel) {
     this.userModel = userModel;
@@ -12,6 +11,13 @@ export default class UserService {
       throw errorService(404, `Could not find a user with id ${userId}!`);
     }
     return user;
+  }
+
+  async _updateUser(id, userInfo) {
+    const status = await this.userModel.update(userInfo, { where: { id } });
+    if (!status[0]) {
+      throw errorService(404, `User with id ${id} doesn't exist`);
+    }
   }
 
   async _checkUserByLogin(newLogin) {
@@ -42,17 +48,10 @@ export default class UserService {
 
   async updateUser(id, userInfo) {
     await this._checkUserByLogin(userInfo.login);
-    const status = await this.userModel.update(userInfo, { where: { id } });
-    if (!status[0]) {
-      throw errorService(404, `User with id ${id} doesn't exist`);
-    }
+    await this._updateUser(id, userInfo);
   }
 
   async deleteUser(userId) {
-    const user = await this._getUserById(userId);
-    user.isDeleted = true;
-    await user.save(); // Soft delete
-    // await user.destroy(); // Hard delete
-    return { message: 'User deleted!', user };
+    await this._updateUser(userId, { isDeleted: true });
   }
 }
