@@ -5,14 +5,6 @@ export default class UserService {
     this.userModel = userModel;
   }
 
-  async _getUserById(userId) {
-    const user = await this.userModel.findByPk(userId);
-    if (!user) {
-      throw errorService(404, `Could not find a user with id ${userId}!`);
-    }
-    return user;
-  }
-
   async _updateUser(id, userInfo) {
     const status = await this.userModel.update(userInfo, { where: { id } });
     if (!status[0]) {
@@ -30,20 +22,22 @@ export default class UserService {
   async getAllUsers() {
     const users = await this.userModel.findAll();
     if (users.length > 0) {
-      return { message: 'Fetched users successfully!', users };
+      return users;
     }
     throw errorService(404, 'Could not find Users in DB!');
   }
 
-  async getUser(userId) {
-    const user = await this._getUserById(userId);
-    return { message: 'User fetched!', user };
+  async getUserById(userId) {
+    const user = await this.userModel.findByPk(userId);
+    if (!user) {
+      throw errorService(404, `Could not find a user with id ${userId}!`);
+    }
+    return user;
   }
 
   async createUser(userInfo) {
     await this._checkUserByLogin(userInfo.login);
-    const newUser = await this.userModel.create(userInfo);
-    return { message: 'User created successfully!', createdUser: newUser };
+    return this.userModel.create(userInfo);
   }
 
   async updateUser(id, userInfo) {

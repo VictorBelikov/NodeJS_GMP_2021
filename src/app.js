@@ -26,8 +26,8 @@ app.use((req, res, next) => {
 });
 
 // Set DB relationships
-User.belongsToMany(Group, { through: UserGroup });
-Group.belongsToMany(User, { through: UserGroup });
+User.belongsToMany(Group, { through: UserGroup, constraints: true, onDelete: 'CASCADE' });
+Group.belongsToMany(User, { through: UserGroup, constraints: true, onDelete: 'CASCADE' });
 
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
