@@ -29,13 +29,12 @@ app.use((req, res, next) => {
 User.belongsToMany(Group, { through: UserGroup, constraints: true, onDelete: 'CASCADE' });
 Group.belongsToMany(User, { through: UserGroup, constraints: true, onDelete: 'CASCADE' });
 
-// eslint-disable-next-line no-unused-vars
-app.use((err, req, res, next) => {
+app.use((err, req, res, _next) => {
   console.log('!! Global error handler !!\n', err);
   const status = err.statusCode || 500;
 
   res.status(status).json({
-    message: status === 500 ? 'Internal server error' : err.message,
+    message: err.message || 'Internal server error',
     status,
     fullErrorObject: err,
   });
