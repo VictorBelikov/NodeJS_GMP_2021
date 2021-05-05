@@ -6,8 +6,8 @@ const userService = new UserService(User);
 
 export const getAllUsers = async (req, res, next) => {
   try {
-    const allUsers = await userService.getAllUsers();
-    return res.status(200).json(allUsers);
+    const users = await userService.getAllUsers();
+    return res.status(200).json({ message: 'Fetched users successfully!', users });
   } catch (err) {
     return next(err);
   }
@@ -15,8 +15,8 @@ export const getAllUsers = async (req, res, next) => {
 
 export const getSpecificUser = async (req, res, next) => {
   try {
-    const user = await userService.getUser(+req.params.userId);
-    res.status(200).json(user);
+    const user = await userService.getUserById(+req.params.userId);
+    res.status(200).json({ message: 'User fetched!', user });
   } catch (err) {
     return next(err);
   }
@@ -26,7 +26,7 @@ export const createUser = async (req, res, next) => {
   try {
     const { login, password, age } = req.body;
     const newUser = await userService.createUser({ login, password, age });
-    res.status(201).json(newUser);
+    res.status(201).json({ message: 'User created successfully!', createdUser: newUser });
   } catch (err) {
     return next(err);
   }
@@ -44,8 +44,9 @@ export const updateUser = async (req, res, next) => {
 
 export const deleteUser = async (req, res, next) => {
   try {
-    const user = await userService.deleteUser(+req.params.userId);
-    res.status(200).json(user);
+    const id = +req.params.userId;
+    await userService.deleteUser(id);
+    res.status(200).json({ message: `User with id ${id} sucessfully deleted!` });
   } catch (err) {
     return next(err);
   }
