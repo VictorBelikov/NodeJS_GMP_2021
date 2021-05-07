@@ -1,6 +1,7 @@
 import express from 'express';
 import morgan from 'morgan';
 
+import logger from './api/middlewares/logger.js';
 import userRoutes from './api/routes/user.js';
 import groupRoutes from './api/routes/group.js';
 
@@ -12,6 +13,9 @@ app.use(morgan('dev'));
 // Body parser
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+
+// custom logger
+app.use(logger);
 
 // Routes
 app.use('/user', userRoutes);
