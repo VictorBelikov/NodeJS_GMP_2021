@@ -16,7 +16,8 @@ router.patch('/:groupId', validateSchema(groupSchema), groupController.updateGro
 
 router.delete('/:groupId', groupController.deleteGroup);
 
-// This route exists for example ONLY, and to show how the method 'addUsersToGroup' works
-router.put('/:groupId', groupController.addAccessRightsToUsers);
+// This route exists for example ONLY to show how the method 'addUsersToGroup' works
+// and has to be deleted in the future.
+router.put('/:groupId', groupController.addAccessToUsers);
 
 export default router;

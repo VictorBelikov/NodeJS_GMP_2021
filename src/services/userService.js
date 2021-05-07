@@ -5,13 +5,6 @@ export default class UserService {
     this.userModel = userModel;
   }
 
-  async _updateUser(id, userInfo) {
-    const status = await this.userModel.update(userInfo, { where: { id } });
-    if (!status[0]) {
-      throw errorService(404, `User with id ${id} doesn't exist`);
-    }
-  }
-
   async _checkUserByLogin(newLogin) {
     const user = await this.userModel.findOne({ where: { login: newLogin } });
     if (user) {
@@ -20,19 +13,11 @@ export default class UserService {
   }
 
   async getAllUsers() {
-    const users = await this.userModel.findAll();
-    if (users.length > 0) {
-      return users;
-    }
-    throw errorService(404, 'Could not find Users in DB!');
+    return this.userModel.findAll();
   }
 
   async getUserById(userId) {
-    const user = await this.userModel.findByPk(userId);
-    if (!user) {
-      throw errorService(404, `Could not find a user with id ${userId}!`);
-    }
-    return user;
+    return this.userModel.findByPk(userId);
   }
 
   async createUser(userInfo) {
@@ -42,10 +27,26 @@ export default class UserService {
 
   async updateUser(id, userInfo) {
     await this._checkUserByLogin(userInfo.login);
-    await this._updateUser(id, userInfo);
+    return this.userModel.update(userInfo, { where: { id } });
   }
 
-  async deleteUser(userId) {
-    await this._updateUser(userId, { isDeleted: true });
+  async deleteUser(id) {
+    return this.userModel.update({ isDeleted: true }, { where: { id } });
+  }
+
+  async getAutoSuggestUsers(loginSubstring, limit) {
+    const allUsers = await this.getAllUsers();
+    return allUsers
+      .sort((a, b) => {
+        if (a.login > b.login) {
+          return 1;
+        }
+        if (a.login < b.login) {
+          return -1;
+        }
+        return 0;
+      })
+      .filter((user) => user.login.includes(loginSubstring))
+      .slice(0, limit || allUsers.length);
   }
 }

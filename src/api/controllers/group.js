@@ -1,15 +1,24 @@
 import Group from '../../models/group.js';
-import User from '../../models/user.js';
+import UserGroup from '../../models/userGroup.js';
 import GroupService from '../../services/groupService.js';
-import UserService from '../../services/userService.js';
-import addUsersToGroup from '../../utils/addUsersToGroup.js';
+import errorService from './errorService.js';
 
-const userService = new UserService(User);
-const groupService = new GroupService(Group);
+const groupService = new GroupService(Group, UserGroup);
+
+const getGroupById = async (groupId) => {
+  const group = await groupService.getGroupById(groupId);
+  if (!group) {
+    throw errorService(404, `Could not find a group with id ${groupId}!`);
+  }
+  return group;
+};
 
 export const getAllGroups = async (req, res, next) => {
   try {
     const groups = await groupService.getAllGroups();
+    if (groups.length < 0) {
+      throw errorService(404, 'Could not find Groups in DB!');
+    }
     return res.status(200).json({ message: 'Fetched groups successfully!', groups });
   } catch (err) {
     return next(err);
@@ -18,7 +27,7 @@ export const getAllGroups = async (req, res, next) => {
 
 export const getSpecificGroup = async (req, res, next) => {
   try {
-    const group = await groupService.getGroupById(req.params.groupId);
+    const group = await getGroupById(req.params.groupId);
     res.status(200).json({ message: 'Group fetched!', group });
   } catch (err) {
     return next(err);
@@ -39,7 +48,10 @@ export const updateGroup = async (req, res, next) => {
   try {
     const { name } = req.body;
     const id = req.params.groupId;
-    await groupService.updateGroup(id, { name });
+    const status = await groupService.updateGroup(id, { name });
+    if (!status[0]) {
+      throw errorService(404, `Group with id ${id} doesn't exist`);
+    }
     return res.status(200).json({ message: `Group with id ${id} sucessfully updated!` });
   } catch (err) {
     return next(err);
@@ -48,17 +60,25 @@ export const updateGroup = async (req, res, next) => {
 
 export const deleteGroup = async (req, res, next) => {
   try {
-    const group = await groupService.deleteGroup(req.params.groupId);
+    const group = await getGroupById(req.params.groupId);
+    await groupService.deleteGroup(group);
     res.status(200).json({ message: 'Group deleted!', deltedGroup: group });
   } catch (err) {
     return next(err);
   }
 };
 
-export const addAccessRightsToUsers = async (req, res, next) => {
+export const addAccessToUsers = async (req, res, next) => {
   try {
-    const group = await addUsersToGroup(req.body.users, req.params.groupId, userService, groupService);
-    res.status(200).json({ message: `Users were added to the ${group.name.toUpperCase()} group` });
+    const userIds = req.body.users;
+    const { groupId } = req.params;
+
+    if (!Array.isArray(userIds)) {
+      throw errorService(400, 'USERS must be an array of INT numbers');
+    }
+    const group = await getGroupById(groupId);
+    await groupService.addUsersToGroup(userIds, groupId);
+    res.status(200).json({ message: `Users with ids ${userIds} were added to the ${group.name.toUpperCase()} group` });
   } catch (err) {
     return next(err);
   }

@@ -1,7 +1,7 @@
 import http from 'http';
 
 import sequelize from './data-access/sequelize.js';
-import fillDb from './utils/fillDb.js';
+import fillDb from './data-access/fillDb.js';
 import app from './app.js';
 
 (async () => {

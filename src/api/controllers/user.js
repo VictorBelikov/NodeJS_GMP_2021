@@ -1,12 +1,15 @@
 import User from '../../models/user.js';
-import getAutoSuggestUsers from '../../utils/getAutoSuggestUsers.js';
 import UserService from '../../services/userService.js';
+import errorService from './errorService.js';
 
 const userService = new UserService(User);
 
 export const getAllUsers = async (req, res, next) => {
   try {
     const users = await userService.getAllUsers();
+    if (users.length < 0) {
+      throw errorService(404, 'Could not find Users in DB!');
+    }
     return res.status(200).json({ message: 'Fetched users successfully!', users });
   } catch (err) {
     return next(err);
@@ -15,7 +18,11 @@ export const getAllUsers = async (req, res, next) => {
 
 export const getSpecificUser = async (req, res, next) => {
   try {
-    const user = await userService.getUserById(+req.params.userId);
+    const { userId } = req.params;
+    const user = await userService.getUserById(+userId);
+    if (!user) {
+      throw errorService(404, `Could not find a user with id ${userId}!`);
+    }
     res.status(200).json({ message: 'User fetched!', user });
   } catch (err) {
     return next(err);
@@ -35,8 +42,12 @@ export const createUser = async (req, res, next) => {
 export const updateUser = async (req, res, next) => {
   try {
     const { login, password, age } = req.body;
-    await userService.updateUser(+req.params.userId, { login, password, age });
-    return res.status(200).json({ message: `User with id ${+req.params.userId} sucessfully updated!` });
+    const { userId } = req.params;
+    const status = await userService.updateUser(+userId, { login, password, age });
+    if (!status[0]) {
+      throw errorService(404, `User with id ${userId} doesn't exist`);
+    }
+    return res.status(200).json({ message: `User with id ${userId} sucessfully updated!` });
   } catch (err) {
     return next(err);
   }
@@ -44,9 +55,12 @@ export const updateUser = async (req, res, next) => {
 
 export const deleteUser = async (req, res, next) => {
   try {
-    const id = +req.params.userId;
-    await userService.deleteUser(id);
-    res.status(200).json({ message: `User with id ${id} sucessfully deleted!` });
+    const { userId } = req.params;
+    const status = await userService.deleteUser(+userId);
+    if (!status[0]) {
+      throw errorService(404, `User with id ${userId} doesn't exist`);
+    }
+    res.status(200).json({ message: `User with id ${userId} sucessfully deleted!` });
   } catch (err) {
     return next(err);
   }
@@ -58,8 +72,7 @@ export const suggestedUserList = async (req, res, next) => {
   limit = limit ? +limit : 0;
 
   try {
-    const { users } = await userService.getAllUsers();
-    const listOfUsers = getAutoSuggestUsers(substr, limit, users);
+    const listOfUsers = await userService.getAutoSuggestUsers(substr, limit);
     return res.status(200).json({ message: 'Fetched users successfully!', listOfUsers });
   } catch (err) {
     return next(err);

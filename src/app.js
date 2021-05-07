@@ -3,9 +3,6 @@ import morgan from 'morgan';
 
 import userRoutes from './api/routes/user.js';
 import groupRoutes from './api/routes/group.js';
-import User from './models/user.js';
-import Group from './models/group.js';
-import UserGroup from './models/userGroup.js';
 
 const app = express();
 
@@ -24,10 +21,6 @@ app.use((req, res, next) => {
   error.statusCode = 404;
   next(error);
 });
-
-// Set DB relationships
-User.belongsToMany(Group, { through: UserGroup, constraints: true, onDelete: 'CASCADE' });
-Group.belongsToMany(User, { through: UserGroup, constraints: true, onDelete: 'CASCADE' });
 
 app.use((err, req, res, _next) => {
   console.log('!! Global error handler !!\n', err);

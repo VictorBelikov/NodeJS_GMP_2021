@@ -1,10 +1,12 @@
 import { validate as uuidValidate } from 'uuid';
 
 import errorService from '../api/controllers/errorService.js';
+import sequelize from '../data-access/sequelize.js';
 
 export default class GroupService {
-  constructor(groupModel) {
+  constructor(groupModel, userGroupModel) {
     this.groupModel = groupModel;
+    this.userGroupModel = userGroupModel;
   }
 
   async _checkGroupByName(newName) {
@@ -15,19 +17,11 @@ export default class GroupService {
   }
 
   async getAllGroups() {
-    const groups = await this.groupModel.findAll();
-    if (groups.length > 0) {
-      return groups;
-    }
-    throw errorService(404, 'Could not find Groups in DB!');
+    return this.groupModel.findAll();
   }
 
   async getGroupById(groupId) {
-    const group = uuidValidate(groupId) ? await this.groupModel.findByPk(groupId) : false;
-    if (!group) {
-      throw errorService(404, `Could not find a group with id ${groupId}!`);
-    }
-    return group;
+    return uuidValidate(groupId) ? this.groupModel.findByPk(groupId) : false;
   }
 
   async createGroup(groupInfo) {
@@ -37,15 +31,16 @@ export default class GroupService {
 
   async updateGroup(id, groupInfo) {
     await this._checkGroupByName(groupInfo.name);
-    const status = uuidValidate(id) ? await this.groupModel.update(groupInfo, { where: { id } }) : [];
-    if (!status[0]) {
-      throw errorService(404, `Group with id ${id} doesn't exist`);
-    }
+    return uuidValidate(id) ? this.groupModel.update(groupInfo, { where: { id } }) : [];
   }
 
-  async deleteGroup(groupId) {
-    const group = await this.getGroupById(groupId);
+  // eslint-disable-next-line class-methods-use-this
+  async deleteGroup(group) {
     await group.destroy(); // Hard delete
-    return group;
+  }
+
+  async addUsersToGroup(userIds, groupId) {
+    const rows = userIds.map((userId) => ({ userId, groupId }));
+    return sequelize.transaction(async () => this.userGroupModel.bulkCreate(rows, { returning: true }));
   }
 }
