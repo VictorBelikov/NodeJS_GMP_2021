@@ -4,11 +4,18 @@ import errorService from './errorService.js';
 
 const userService = new UserService(User);
 
+const getUserByLogin = async (login, req) => {
+  const user = await userService.getUserByLogin(login);
+  if (user) {
+    throw errorService(400, `User with login ${login} already exists in DB`, req);
+  }
+};
+
 export const getAllUsers = async (req, res, next) => {
   try {
     const users = await userService.getAllUsers();
     if (users.length < 0) {
-      throw errorService(404, 'Could not find Users in DB!');
+      throw errorService(404, 'Could not find Users in DB!', req);
     }
     return res.status(200).json({ message: 'Fetched users successfully!', users });
   } catch (err) {
@@ -21,7 +28,7 @@ export const getSpecificUser = async (req, res, next) => {
     const { userId } = req.params;
     const user = await userService.getUserById(+userId);
     if (!user) {
-      throw errorService(404, `Could not find a user with id ${userId}!`);
+      throw errorService(404, `Could not find a user with id ${userId}!`, req);
     }
     res.status(200).json({ message: 'User fetched!', user });
   } catch (err) {
@@ -32,6 +39,7 @@ export const getSpecificUser = async (req, res, next) => {
 export const createUser = async (req, res, next) => {
   try {
     const { login, password, age } = req.body;
+    await getUserByLogin(login, req);
     const newUser = await userService.createUser({ login, password, age });
     res.status(201).json({ message: 'User created successfully!', createdUser: newUser });
   } catch (err) {
@@ -43,9 +51,10 @@ export const updateUser = async (req, res, next) => {
   try {
     const { login, password, age } = req.body;
     const { userId } = req.params;
+    await getUserByLogin(login, req);
     const status = await userService.updateUser(+userId, { login, password, age });
     if (!status[0]) {
-      throw errorService(404, `User with id ${userId} doesn't exist`);
+      throw errorService(404, `User with id ${userId} doesn't exist`, req);
     }
     return res.status(200).json({ message: `User with id ${userId} sucessfully updated!` });
   } catch (err) {
@@ -58,7 +67,7 @@ export const deleteUser = async (req, res, next) => {
     const { userId } = req.params;
     const status = await userService.deleteUser(+userId);
     if (!status[0]) {
-      throw errorService(404, `User with id ${userId} doesn't exist`);
+      throw errorService(404, `User with id ${userId} doesn't exist`, req);
     }
     res.status(200).json({ message: `User with id ${userId} sucessfully deleted!` });
   } catch (err) {

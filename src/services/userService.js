@@ -1,15 +1,10 @@
-import errorService from '../api/controllers/errorService.js';
-
 export default class UserService {
   constructor(userModel) {
     this.userModel = userModel;
   }
 
-  async _checkUserByLogin(newLogin) {
-    const user = await this.userModel.findOne({ where: { login: newLogin } });
-    if (user) {
-      throw errorService(400, `User with login ${newLogin} already exists in DB`);
-    }
+  async getUserByLogin(newLogin) {
+    return this.userModel.findOne({ where: { login: newLogin } });
   }
 
   async getAllUsers() {
@@ -21,12 +16,10 @@ export default class UserService {
   }
 
   async createUser(userInfo) {
-    await this._checkUserByLogin(userInfo.login);
     return this.userModel.create(userInfo);
   }
 
   async updateUser(id, userInfo) {
-    await this._checkUserByLogin(userInfo.login);
     return this.userModel.update(userInfo, { where: { id } });
   }
 

@@ -2,7 +2,7 @@ import colors from 'colors';
 
 export default (req, res, next) => {
   const { url, method } = req;
-  const { statusCode } = res;
+  // const { statusCode } = res;
   const currDate = new Date();
   const year = currDate.getFullYear();
   const month = currDate.getMonth() + 1;
@@ -18,9 +18,6 @@ export default (req, res, next) => {
   const formattedDate = `[${year}/${month}/${date} ${hours}:${minutes}:${secs}]`;
   const body = Object.keys(req.body).length > 0 ? `body: ${JSON.stringify(req.body)}` : '';
 
-  console.log(
-    `${colors.blue(formattedDate)} ${colors.brightCyan(method).bold}:${colors.gray(url).underline} ${statusCode}; `,
-    body,
-  );
+  console.log(`${colors.blue(formattedDate)} ${colors.brightCyan(method).bold}:${colors.gray(url).underline}; `, body);
   next();
 };

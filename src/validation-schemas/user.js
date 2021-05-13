@@ -9,7 +9,7 @@ export default Joi.object().keys({
     .required(),
   password: Joi.string()
     .pattern(new RegExp(/^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/))
-    .message('Incorrect data. Password must contain letter and numbers.')
+    .message('Incorrect data. Password must contain letters and numbers.')
     .required(),
   age: Joi
     .number()

@@ -3,6 +3,7 @@ import http from 'http';
 import sequelize from './data-access/sequelize.js';
 import fillDb from './data-access/fillDb.js';
 import app from './app.js';
+import errLogger from './utils/error-logger.js';
 
 (async () => {
   try {
@@ -22,3 +23,12 @@ import app from './app.js';
     console.error('Connection error: ', e);
   }
 })();
+
+process
+  .on('unhandledRejection', (reason, _promise) => {
+    errLogger.error(reason);
+  })
+  .on('uncaughtException', (err) => {
+    errLogger.error(err);
+    process.exit(1);
+  });
