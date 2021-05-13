@@ -22,7 +22,6 @@
   },
   "dependencies": {
     "cls-hooked": "^4.2.2",
-    "colors": "^1.4.0",
     "express": "^4.17.1",
     "joi": "^17.4.0",
     "morgan": "^1.10.0",

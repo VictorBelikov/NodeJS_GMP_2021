@@ -4,10 +4,10 @@ import errorService from './errorService.js';
 
 const userService = new UserService(User);
 
-const getUserByLogin = async (login, req) => {
+const getUserByLogin = async (login) => {
   const user = await userService.getUserByLogin(login);
   if (user) {
-    throw errorService(400, `User with login ${login} already exists in DB`, req);
+    throw errorService(400, `User with login ${login} already exists in DB`);
   }
 };
 
@@ -15,7 +15,7 @@ export const getAllUsers = async (req, res, next) => {
   try {
     const users = await userService.getAllUsers();
     if (users.length < 0) {
-      throw errorService(404, 'Could not find Users in DB!', req);
+      throw errorService(404, 'Could not find Users in DB!');
     }
     return res.status(200).json({ message: 'Fetched users successfully!', users });
   } catch (err) {
@@ -28,7 +28,7 @@ export const getSpecificUser = async (req, res, next) => {
     const { userId } = req.params;
     const user = await userService.getUserById(+userId);
     if (!user) {
-      throw errorService(404, `Could not find a user with id ${userId}!`, req);
+      throw errorService(404, `Could not find a user with id ${userId}!`);
     }
     res.status(200).json({ message: 'User fetched!', user });
   } catch (err) {
@@ -54,7 +54,7 @@ export const updateUser = async (req, res, next) => {
     await getUserByLogin(login, req);
     const status = await userService.updateUser(+userId, { login, password, age });
     if (!status[0]) {
-      throw errorService(404, `User with id ${userId} doesn't exist`, req);
+      throw errorService(404, `User with id ${userId} doesn't exist`);
     }
     return res.status(200).json({ message: `User with id ${userId} sucessfully updated!` });
   } catch (err) {
@@ -67,7 +67,7 @@ export const deleteUser = async (req, res, next) => {
     const { userId } = req.params;
     const status = await userService.deleteUser(+userId);
     if (!status[0]) {
-      throw errorService(404, `User with id ${userId} doesn't exist`, req);
+      throw errorService(404, `User with id ${userId} doesn't exist`);
     }
     res.status(200).json({ message: `User with id ${userId} sucessfully deleted!` });
   } catch (err) {

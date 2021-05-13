@@ -9,15 +9,15 @@ const getGroupById = async (req) => {
   const { groupId } = req.params;
   const group = await groupService.getGroupById(groupId);
   if (!group) {
-    throw errorService(404, `Could not find a group with id ${groupId}!`, req);
+    throw errorService(404, `Could not find a group with id ${groupId}!`);
   }
   return group;
 };
 
-const getGroupByName = async (name, req) => {
+const getGroupByName = async (name) => {
   const group = groupService.getGroupByName(name);
   if (group) {
-    throw errorService(400, `Group with name ${name} already exists in DB`, req);
+    throw errorService(400, `Group with name ${name} already exists in DB`);
   }
 };
 
@@ -25,7 +25,7 @@ export const getAllGroups = async (req, res, next) => {
   try {
     const groups = await groupService.getAllGroups();
     if (groups.length < 0) {
-      throw errorService(404, 'Could not find Groups in DB!', req);
+      throw errorService(404, 'Could not find Groups in DB!');
     }
     return res.status(200).json({ message: 'Fetched groups successfully!', groups });
   } catch (err) {
@@ -60,7 +60,7 @@ export const updateGroup = async (req, res, next) => {
     await getGroupByName(name, req);
     const status = await groupService.updateGroup(id, { name });
     if (!status[0]) {
-      throw errorService(404, `Group with id ${id} doesn't exist`, req);
+      throw errorService(404, `Group with id ${id} doesn't exist`);
     }
     return res.status(200).json({ message: `Group with id ${id} sucessfully updated!` });
   } catch (err) {
@@ -84,7 +84,7 @@ export const addAccessToUsers = async (req, res, next) => {
     const { groupId } = req.params;
 
     if (!Array.isArray(userIds)) {
-      throw errorService(400, 'USERS must be an array of INT numbers', req);
+      throw errorService(400, 'USERS must be an array of INT numbers');
     }
     const group = await getGroupById(req);
     await groupService.addUsersToGroup(userIds, groupId);
