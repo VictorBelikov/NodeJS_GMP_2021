@@ -1,6 +1,5 @@
 import { validate as uuidValidate } from 'uuid';
 
-import errorService from '../api/controllers/errorService.js';
 import sequelize from '../data-access/sequelize.js';
 
 export default class GroupService {
@@ -9,11 +8,8 @@ export default class GroupService {
     this.userGroupModel = userGroupModel;
   }
 
-  async _checkGroupByName(newName) {
-    const group = await this.groupModel.findOne({ where: { name: newName } });
-    if (group) {
-      throw errorService(400, `Group with name ${newName} already exists in DB`);
-    }
+  async getGroupByName(newName) {
+    return this.groupModel.findOne({ where: { name: newName } });
   }
 
   async getAllGroups() {
@@ -25,12 +21,10 @@ export default class GroupService {
   }
 
   async createGroup(groupInfo) {
-    await this._checkGroupByName(groupInfo.name);
     return this.groupModel.create(groupInfo);
   }
 
   async updateGroup(id, groupInfo) {
-    await this._checkGroupByName(groupInfo.name);
     return uuidValidate(id) ? this.groupModel.update(groupInfo, { where: { id } }) : [];
   }
 

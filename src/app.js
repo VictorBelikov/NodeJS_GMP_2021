@@ -1,13 +1,14 @@
 import express from 'express';
-import morgan from 'morgan';
 
+import serviceLogger from './api/middlewares/serviceLogger.js';
+import errorHandler from './api/middlewares/errorHandler.js';
 import userRoutes from './api/routes/user.js';
 import groupRoutes from './api/routes/group.js';
 
 const app = express();
 
 // Logs request type to the console
-app.use(morgan('dev'));
+app.use(serviceLogger);
 
 // Body parser
 app.use(express.urlencoded({ extended: false }));
@@ -22,15 +23,6 @@ app.use((req, res, next) => {
   next(error);
 });
 
-app.use((err, req, res, _next) => {
-  console.log('!! Global error handler !!\n', err);
-  const status = err.statusCode || 500;
-
-  res.status(status).json({
-    message: err.message || 'Internal server error',
-    status,
-    fullErrorObject: err,
-  });
-});
+app.use(errorHandler);
 
 export default app;

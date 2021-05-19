@@ -30,6 +30,6 @@
     "object-curly-spacing": "off",
     "func-names": "off",
     "import/extensions": "off",
-    "no-unused-vars": ["off", { "argsIgnorePattern": "^_" }]
+    "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }]
   }
 }
