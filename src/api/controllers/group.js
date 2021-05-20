@@ -1,7 +1,7 @@
 import Group from '../../models/group.js';
 import UserGroup from '../../models/userGroup.js';
 import GroupService from '../../services/groupService.js';
-import errorService from './errorService.js';
+import errorService from '../../utils/errorService.js';
 
 const groupService = new GroupService(Group, UserGroup);
 
