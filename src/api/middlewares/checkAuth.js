@@ -4,8 +4,7 @@ import errorService from '../../utils/errorService.js';
 
 export default (req, res, next) => {
   try {
-    // const token = req.headers.authorization.split(' ')[1]; // or
-    const token = req.get('Authorization')?.split(' ')[1];
+    const token = req.header('x-access-token');
     if (!token) {
       throw errorService(401, 'Auth failed. JWT must be provided.');
     }

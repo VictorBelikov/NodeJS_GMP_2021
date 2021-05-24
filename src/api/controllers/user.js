@@ -100,7 +100,7 @@ export const login = async (req, res, next) => {
     if (password !== user.password) {
       throw errorService(401, 'Incorrect password!');
     }
-    const token = jwt.sign({ userId: user.id.toString(), login, password }, process.env.JWT_KEY, { expiresIn: '1h' });
+    const token = jwt.sign({ userId: user.id.toString(), login }, process.env.JWT_KEY, { expiresIn: '1h' });
     res.status(200).json({ token, user });
   } catch (err) {
     return next(err);
