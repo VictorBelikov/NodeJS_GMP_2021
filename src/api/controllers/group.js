@@ -3,7 +3,7 @@ import UserGroup from '../../models/userGroup.js';
 import GroupService from '../../services/groupService.js';
 import errorService from '../../utils/errorService.js';
 
-const groupService = new GroupService(Group, UserGroup);
+export const groupService = new GroupService(Group, UserGroup);
 
 const getGroupById = async (req) => {
   const { groupId } = req.params;
@@ -24,7 +24,7 @@ const getGroupByName = async (name) => {
 export const getAllGroups = async (req, res, next) => {
   try {
     const groups = await groupService.getAllGroups();
-    if (groups.length < 0) {
+    if (groups.length <= 0) {
       throw errorService(404, 'Could not find Groups in DB!');
     }
     return res.status(200).json({ message: 'Fetched groups successfully!', groups });
@@ -45,7 +45,7 @@ export const getSpecificGroup = async (req, res, next) => {
 export const createGroup = async (req, res, next) => {
   try {
     const { name } = req.body;
-    await getGroupByName(name, req);
+    await getGroupByName(name);
     const newGroup = await groupService.createGroup({ name });
     res.status(201).json({ message: 'Group created successfully!', createdGroup: newGroup });
   } catch (err) {
@@ -57,7 +57,7 @@ export const updateGroup = async (req, res, next) => {
   try {
     const { name } = req.body;
     const id = req.params.groupId;
-    await getGroupByName(name, req);
+    await getGroupByName(name);
     const status = await groupService.updateGroup(id, { name });
     if (!status[0]) {
       throw errorService(404, `Group with id ${id} doesn't exist`);
@@ -70,9 +70,12 @@ export const updateGroup = async (req, res, next) => {
 
 export const deleteGroup = async (req, res, next) => {
   try {
-    const group = await getGroupById(req);
-    await groupService.deleteGroup(group);
-    res.status(200).json({ message: 'Group deleted!', deltedGroup: group });
+    const { groupId } = req.params;
+    const status = await groupService.deleteGroup(groupId);
+    if (!status[0]) {
+      throw errorService(404, `Group with id ${groupId} doesn't exist`);
+    }
+    return res.status(200).json({ message: `Group with id ${groupId} sucessfully deleted!` });
   } catch (err) {
     return next(err);
   }

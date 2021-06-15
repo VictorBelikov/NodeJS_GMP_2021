@@ -4,7 +4,7 @@ import User from '../../models/user.js';
 import UserService from '../../services/userService.js';
 import errorService from '../../utils/errorService.js';
 
-const userService = new UserService(User);
+export const userService = new UserService(User);
 
 const checkUserByLogin = async (login) => {
   const user = await userService.getUserByLogin(login);
@@ -16,7 +16,7 @@ const checkUserByLogin = async (login) => {
 export const getAllUsers = async (req, res, next) => {
   try {
     const users = await userService.getAllUsers();
-    if (users.length < 0) {
+    if (users.length <= 0) {
       throw errorService(404, 'Could not find Users in DB!');
     }
     return res.status(200).json({ message: 'Fetched users successfully!', users });
@@ -41,7 +41,7 @@ export const getSpecificUser = async (req, res, next) => {
 export const createUser = async (req, res, next) => {
   try {
     const { login, password, age } = req.body;
-    await checkUserByLogin(login, req);
+    await checkUserByLogin(login);
     const newUser = await userService.createUser({ login, password, age });
     res.status(201).json({ message: 'User created successfully!', createdUser: newUser });
   } catch (err) {
@@ -53,7 +53,7 @@ export const updateUser = async (req, res, next) => {
   try {
     const { login, password, age } = req.body;
     const { userId } = req.params;
-    await checkUserByLogin(login, req);
+    await checkUserByLogin(login);
     const status = await userService.updateUser(+userId, { login, password, age });
     if (!status[0]) {
       throw errorService(404, `User with id ${userId} doesn't exist`);

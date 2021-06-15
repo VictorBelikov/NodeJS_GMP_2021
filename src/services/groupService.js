@@ -28,9 +28,8 @@ export default class GroupService {
     return uuidValidate(id) ? this.groupModel.update(groupInfo, { where: { id } }) : [];
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  async deleteGroup(group) {
-    await group.destroy(); // Hard delete
+  async deleteGroup(id) {
+    return uuidValidate(id) ? this.groupModel.destroy({ where: { id } }) : []; // Hard delete
   }
 
   async addUsersToGroup(userIds, groupId) {
