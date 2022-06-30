@@ -18,7 +18,11 @@ import logger from './utils/logger.js';
 
     const port = Number(process.env.APP_PORT) || 3000;
     const server = http.createServer(app);
-    server.listen(port, () => console.log(`Server is listening on port ${port}; process.version is ${process.version}`));
+    server.listen(
+      port,
+      () => console.log(`Server is listening on port ${port}; process.version is ${process.version}`),
+      logger.info('some error on start'),
+    );
   } catch (e) {
     console.error('Connection error: ', e);
   }
